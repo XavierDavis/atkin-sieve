@@ -1,6 +1,5 @@
 #include <iostream>
-#include <list>
-#include <map>
+#include <vector>
 #include <utility>
 #include <cmath>
 #include <algorithm>
@@ -14,13 +13,13 @@ int main(){
 		exit(1);
 
 	// Krok 1. Utworzenie listy wyników
-	std::list<long> primes = {2, 3, 5};
+	std::vector<long> primes = {2, 3, 5};
 	// Krok 2. Utworzenie listy reprezentującej sito
-	std::map<long, bool> sieve;
-	for(long i=6; i<range; i++){
-		sieve.insert(std::pair<long, bool>(i, false));
+	std::vector<bool> sieve;
+	for(long i=0; i<range; i++){
+		sieve.push_back(false);
 	}
-	
+
 	// Podpunkty 3.1-3.3 można w teorii poprowadzić na dwa sposoby
 	// 1. Albo iterować po wszystkich n i sprawdzać dla każdego z odpowiednią resztą wszystkie możliwe rozwiązania równania
 	// 2. Albo sprawdzić dla wszystkich mających sens x i y jakie n mogą spełnić równanie i dla każdego z tych n sprawdzić resztę z dzielenia przez 60
@@ -30,10 +29,12 @@ int main(){
 	// Krok 3.1.
 	// Równanie: 4x^2 + y^2 = n
 	// 4x^2 jest zawsze parzyste, n ma być docelowo liczbą nieparzystą, y musi być zatem nieparzyste
-	std::list<long> r1 = {1, 13, 17, 29, 37, 41, 49, 53};
+	std::vector<long> r1 = {1, 13, 17, 29, 37, 41, 49, 53};
 	for (long x = 0; x <= range_rooted; x++){
 		for(long y = 1; y <= range_rooted; y += 2){
 			long n = 4*x*x + y*y;
+			if(n > range)
+				break;
 			long r = n%60;
 			if(std::find(r1.begin(), r1.end(), r) != r1.end())
 				sieve[n] = !sieve[n];
@@ -43,10 +44,12 @@ int main(){
 	// Krok 3.2.
 	// Równanie: 3x^2 + y^2 = n
 	// 3x^2 jest parzyste tylko wtedy gdy x jest parzyste, zatem aby n było nieparzyste x i y muszą być różnej parzystości
-	std::list<long> r2 = {7, 19, 31, 43};
+	std::vector<long> r2 = {7, 19, 31, 43};
 	for (long x = 0; x <= range_rooted; x++){
 		for(long y = 0; y <= range_rooted; y++){
 			long n = 3*x*x + y*y;
+			if(n > range)
+				break;
 			long r = n%60;
 			if(std::find(r2.begin(), r2.end(), r) != r2.end())
 				sieve[n] = !sieve[n];
@@ -56,10 +59,12 @@ int main(){
 	// Krok 3.3.
 	// Równanie: 3x^2 - y^2 = n, gdzie x > y
 	// 3x^2 jest parzyste tylko wtedy gdy x jest parzyste, zatem aby n było nieparzyste x i y muszą być różnej parzystości
-	std::list<long> r3 = {11, 23, 47, 59};
+	std::vector<long> r3 = {11, 23, 47, 59};
 	for (long x = 0; x <= range_rooted; x++){
 		for(long y = x-1; y >= 0; y -= 2){
 			long n = 3*x*x - y*y;
+			if(n > range)
+				break;
 			long r = n%60;
 			if(std::find(r3.begin(), r3.end(), r) != r3.end())
 				sieve[n] = !sieve[n];
