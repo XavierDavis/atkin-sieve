@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <utility>
 #include <cmath>
 #include <algorithm>
 
@@ -30,7 +29,7 @@ int main(){
 	// Równanie: 4x^2 + y^2 = n
 	// 4x^2 jest zawsze parzyste, n ma być docelowo liczbą nieparzystą, y musi być zatem nieparzyste
 	std::vector<long> r1 = {1, 13, 17, 29, 37, 41, 49, 53};
-	for (long x = 0; x <= range_rooted; x++){
+	for (long x = 0; x <= range_rooted / 2; x++){
 		for(long y = 1; y <= range_rooted; y += 2){
 			long n = 4*x*x + y*y;
 			if(n > range)
@@ -45,8 +44,8 @@ int main(){
 	// Równanie: 3x^2 + y^2 = n
 	// 3x^2 jest parzyste tylko wtedy gdy x jest parzyste, zatem aby n było nieparzyste x i y muszą być różnej parzystości
 	std::vector<long> r2 = {7, 19, 31, 43};
-	for (long x = 0; x <= range_rooted; x++){
-		for(long y = 0; y <= range_rooted; y++){
+	for (long x = 0; x <= range_rooted / 1.5; x++){
+		for(long y = !(x%2); y <= range_rooted; y += 2){
 			long n = 3*x*x + y*y;
 			if(n > range)
 				break;
