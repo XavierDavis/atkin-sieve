@@ -14,10 +14,7 @@ int main(){
 	// Krok 1. Utworzenie listy wyników
 	std::vector<long> primes = {2, 3, 5};
 	// Krok 2. Utworzenie listy reprezentującej sito
-	std::vector<bool> sieve;
-	for(long i=0; i<range; i++){
-		sieve.push_back(false);
-	}
+	std::vector<bool> sieve(range, false);
 
 	// Podpunkty 3.1-3.3 można w teorii poprowadzić na dwa sposoby
 	// 1. Albo iterować po wszystkich n i sprawdzać dla każdego z odpowiednią resztą wszystkie możliwe rozwiązania równania
