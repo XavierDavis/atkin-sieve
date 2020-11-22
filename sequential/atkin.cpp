@@ -27,10 +27,9 @@ int main(){
 	// 4x^2 jest zawsze parzyste, n ma być docelowo liczbą nieparzystą, y musi być zatem nieparzyste
 	std::vector<long> r1 = {1, 13, 17, 29, 37, 41, 49, 53};
 	for (long x = 0; x <= range_rooted / 2; x++){
-		for(long y = 1; y <= range_rooted; y += 2){
+		long limit = std::sqrt(range - 4*x*x);
+		for(long y = 1; y <= limit; y += 2){
 			long n = 4*x*x + y*y;
-			if(n > range)
-				break;
 			long r = n%60;
 			if(std::find(r1.begin(), r1.end(), r) != r1.end())
 				sieve[n] = !sieve[n];
@@ -41,11 +40,10 @@ int main(){
 	// Równanie: 3x^2 + y^2 = n
 	// 3x^2 jest parzyste tylko wtedy gdy x jest parzyste, zatem aby n było nieparzyste x i y muszą być różnej parzystości
 	std::vector<long> r2 = {7, 19, 31, 43};
-	for (long x = 0; x <= range_rooted / 1.5; x++){
-		for(long y = !(x%2); y <= range_rooted; y += 2){
+	for (long x = 0; x <= range_rooted / std::sqrt(3); x++){
+		long limit = std::sqrt(range - 3*x*x);
+		for(long y = !(x%2); y <= limit; y += 2){
 			long n = 3*x*x + y*y;
-			if(n > range)
-				break;
 			long r = n%60;
 			if(std::find(r2.begin(), r2.end(), r) != r2.end())
 				sieve[n] = !sieve[n];
@@ -56,11 +54,12 @@ int main(){
 	// Równanie: 3x^2 - y^2 = n, gdzie x > y
 	// 3x^2 jest parzyste tylko wtedy gdy x jest parzyste, zatem aby n było nieparzyste x i y muszą być różnej parzystości
 	std::vector<long> r3 = {11, 23, 47, 59};
-	for (long x = 0; x <= range_rooted; x++){
-		for(long y = x-1; y >= 0; y -= 2){
+	for (long x = 0; 2*x*x + 2*x - 1 < range; x++){
+		long limit = 0;
+		if(3*x*x > range)
+			limit = std::ceil(std::sqrt(3*x*x - range));
+		for(long y = x-1; y >= limit; y -= 2){
 			long n = 3*x*x - y*y;
-			if(n > range)
-				break;
 			long r = n%60;
 			if(std::find(r3.begin(), r3.end(), r) != r3.end())
 				sieve[n] = !sieve[n];
