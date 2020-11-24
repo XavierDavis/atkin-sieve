@@ -53,3 +53,7 @@ for(long x=0; x<limit1; x += s1){
     }
 }
 ```
+
+# Bufory
+* Sito - wystarczy odczyt ze strony hosta, zapis i odczyt ze strony GPU
+* Tablice reszt - tylko zapis ze strony hosta, tylko odczyt ze strony GPU
