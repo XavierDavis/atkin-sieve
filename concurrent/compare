@@ -1,0 +1,15 @@
+#!/bin/bash
+
+g++ atkin.cpp -o a.out -l OpenCL && g++ ../sequential/erastothenes.cpp -o ./e.out || exit 1
+
+read -a range -p "Podaj koniec n zakresu 1 do n który ma zostać przesitowany: " 
+
+while [ "$range" -lt "6" ]
+do
+	read -a range -p "Podaj n większe od 5: "
+done
+
+echo $range | ./a.out > o1 
+echo $range | ./e.out > o2
+diff o1 o2 && echo OK
+rm a.out e.out o1 o2
