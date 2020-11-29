@@ -35,7 +35,7 @@ int main(){
 
 	std::string num;
 	device.getInfo(CL_DEVICE_VERSION, &num);
-	std::cout << "Wersja opencl c: " << num << std::endl;
+	std::cout << "Wersja opencla: " << num << std::endl;
 	//----------------------------------------------------------------------INICJALIZACJA OPENCLA
 
 	long range = 0;
@@ -46,18 +46,17 @@ int main(){
 	// Krok 1. Utworzenie listy wyników
 	std::vector<long> primes = {2, 3, 5};
 	// Krok 2. Utworzenie listy reprezentującej sito + bufora OpenCLowego
-	cl::Buffer sieveBuf(context, CL_MEM_READ_WRITE|CL_MEM_HOST_READ_ONLY|CL_MEM_USE_HOST_PTR, range);
-	queue.enqueueFillBuffer(sieveBuf, CL_FALSE, 0, range);
+	cl::Buffer sieveBuf(context, CL_MEM_READ_WRITE|CL_MEM_HOST_READ_ONLY, sizeof(int) * range);
 
 	//Utworzenie 
 	std::vector<int> r1 = {1, 13, 17, 29, 37, 41, 49, 53};
-	cl::Buffer r1Buf(context, CL_MEM_READ_ONLY|CL_MEM_HOST_WRITE_ONLY, r1.size(), r1.data());
-
+	cl::Buffer r1Buf(context, CL_MEM_READ_ONLY|CL_MEM_USE_HOST_PTR, r1.size() * sizeof(int), r1.data());
+	
 	std::vector<int> r2 = {7, 19, 31, 43};
-	cl::Buffer r2Buf(context, CL_MEM_READ_ONLY|CL_MEM_HOST_WRITE_ONLY, r2.size(), r2.data());
-
+	cl::Buffer r2Buf(context, CL_MEM_READ_ONLY|CL_MEM_USE_HOST_PTR, r2.size() * sizeof(int), r2.data());
+	
 	std::vector<int> r3 = {11, 23, 47, 59};
-	cl::Buffer r3Buf(context, CL_MEM_READ_ONLY|CL_MEM_HOST_WRITE_ONLY, r3.size(), r3.data());
+	cl::Buffer r3Buf(context, CL_MEM_READ_ONLY|CL_MEM_USE_HOST_PTR, r3.size() * sizeof(int), r3.data());
 	
 	long range_rooted = std::ceil(std::sqrt(range));
 	int jump = 1048576;
@@ -90,7 +89,7 @@ int main(){
 	}
 
 	// Krok 3.3.
-	for (long x = 0; 2*x*x + 2*x - 1 < range; x++){
+	for (long x = 1; 2*x*x + 2*x - 1 < range; x++){
 		long limit = 0;
 		if(3*x*x > range)
 			limit = std::ceil(std::sqrt(3*x*x - range));
@@ -104,7 +103,6 @@ int main(){
 			queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(1024, 1024, r3.size()));
 		}
 	}	
-	cl::finish();
 
 	bool sieve[range];
 	queue.enqueueReadBuffer(sieveBuf, CL_TRUE, 0, sizeof(sieve), sieve);
@@ -123,7 +121,7 @@ int main(){
 	}
 
 	// Koniec: wypisanie wartości
-	for (long n:primes){
-		std::cout << n << std::endl;
-	}
+	//for (long n:primes){
+	//	std::cout << n << std::endl;
+	//}
 }

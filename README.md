@@ -1,3 +1,8 @@
 # Wersja sekwencyjna
-## Debugging
-Zmiana typu wszystkich zmiennych *int* na *long* usunęła niepoprawne wyniki przy większych zasięgach. Aktualnie algorytm działa poprawnie dla zasięgów do 16 000 000. W przypadku zapotrzebowania na większe zasięgi typ zmiennych będzie można ponownie zmienić na większy.
+Mocno usprawniona od pierwszej implementacji.
+Przetestowana dla zasięgów do 16 000 000.
+
+# Wersja równoległa
+Działa dla zasięgów do 8 300 000.
+Kilkadziesiąt razy wolniejsza od wersji sekwencyjnej.
+Rozważana alternatywna implementacja, jeśli czas pozwoli.
