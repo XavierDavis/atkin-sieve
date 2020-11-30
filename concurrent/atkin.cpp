@@ -12,13 +12,11 @@ int main(){
 	//Pobranie platform
 	std::vector<cl::Platform> platforms;
 	cl::Platform::get(&platforms);
-	std::cout << "Liczba platform: " << platforms.size() << std::endl;
 
 	//Pobranie urządzeń
 	cl::Platform platform = platforms.front();
 	std::vector<cl::Device> devices;
 	platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
-	std::cout << "Liczba urządzeń: " << devices.size() << std::endl;
 	cl::Device device = devices.front();
 
 	//Plik źródłowy
@@ -32,10 +30,6 @@ int main(){
 	program.build("-cl-std=CL1.2");
 	//Utworzenie kolejki
 	cl::CommandQueue queue(context, device);
-
-	std::string num;
-	device.getInfo(CL_DEVICE_VERSION, &num);
-	std::cout << "Wersja opencla: " << num << std::endl;
 	//----------------------------------------------------------------------INICJALIZACJA OPENCLA
 
 	long range = 0;
@@ -49,14 +43,8 @@ int main(){
 	cl::Buffer sieveBuf(context, CL_MEM_READ_WRITE|CL_MEM_HOST_READ_ONLY, sizeof(int) * range);
 
 	//Utworzenie 
-	std::vector<int> r1 = {1, 13, 17, 29, 37, 41, 49, 53};
-	cl::Buffer r1Buf(context, CL_MEM_READ_ONLY|CL_MEM_USE_HOST_PTR, r1.size() * sizeof(int), r1.data());
 	
-	std::vector<int> r2 = {7, 19, 31, 43};
-	cl::Buffer r2Buf(context, CL_MEM_READ_ONLY|CL_MEM_USE_HOST_PTR, r2.size() * sizeof(int), r2.data());
 	
-	std::vector<int> r3 = {11, 23, 47, 59};
-	cl::Buffer r3Buf(context, CL_MEM_READ_ONLY|CL_MEM_USE_HOST_PTR, r3.size() * sizeof(int), r3.data());
 	
 	long range_rooted = std::ceil(std::sqrt(range));
 	int jump = 1048576;
@@ -67,10 +55,9 @@ int main(){
 			cl::Kernel kernel(program, "equation1");
 			kernel.setArg(0, x);
 			kernel.setArg(1, y/(jump*2));
-			kernel.setArg(2, r1Buf);
-			kernel.setArg(3, sieveBuf);
-			kernel.setArg(4, range);
-			queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(1024, 1024, r1.size()));
+			kernel.setArg(2, sieveBuf);
+			kernel.setArg(3, range);
+			queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(1024, 1024, 8));
 		}
 	}
 	
@@ -81,10 +68,9 @@ int main(){
 			cl::Kernel kernel(program, "equation2");
 			kernel.setArg(0, x);
 			kernel.setArg(1, y/(jump*2));
-			kernel.setArg(2, r2Buf);
-			kernel.setArg(3, sieveBuf);
-			kernel.setArg(4, range);
-			queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(1024, 1024, r2.size()));
+			kernel.setArg(2, sieveBuf);
+			kernel.setArg(3, range);
+			queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(1024, 1024, 4));
 		}
 	}
 
@@ -97,10 +83,9 @@ int main(){
 			cl::Kernel kernel(program, "equation3");
 			kernel.setArg(0, x);
 			kernel.setArg(1, y/(jump*2));
-			kernel.setArg(2, r3Buf);
-			kernel.setArg(3, sieveBuf);
-			kernel.setArg(4, range);
-			queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(1024, 1024, r3.size()));
+			kernel.setArg(2, sieveBuf);
+			kernel.setArg(3, range);
+			queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(1024, 1024, 4));
 		}
 	}	
 
