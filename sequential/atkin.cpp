@@ -2,15 +2,19 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include <chrono>
 
 // Program realizujący sekwencyjną implementację sita Atkina
 
 int main(){
+	
+
 	long range = 0;
 	std::cin >> range;
 	if(range < 6)
 		exit(1);
 
+	auto start = std::chrono::high_resolution_clock::now();
 	// Krok 1. Utworzenie listy wyników
 	std::vector<long> primes = {2, 3, 5};
 	// Krok 2. Utworzenie listy reprezentującej sito
@@ -78,7 +82,10 @@ int main(){
 			}
 		}
 	}
-
+	auto end = std::chrono::high_resolution_clock::now();
+	double time_count = std::chrono::duration_cast<std::chrono::nanoseconds>(end-start).count();
+	time_count *= 1e-9;
+	std::cout << "Algorytm zajął " << time_count << " s" << std::endl;
 	// Koniec: wypisanie wartości
 	//for (long n:primes){
 	//	std::cout << n << std::endl;

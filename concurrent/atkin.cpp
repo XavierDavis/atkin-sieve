@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <chrono>
 
 int main(){
 
@@ -39,6 +40,7 @@ int main(){
 	if(range < 6)
 		exit(1);
 
+	auto start = std::chrono::high_resolution_clock::now();
 	// Krok 1. Utworzenie listy wyników
 	std::vector<long> primes = {2, 3, 5};
 	// Krok 2. Utworzenie bufora OpenCLowego reprezentującego sito
@@ -81,6 +83,11 @@ int main(){
 			}
 		}
 	}
+
+	auto end = std::chrono::high_resolution_clock::now();
+	double time_count = std::chrono::duration_cast<std::chrono::nanoseconds>(end-start).count();
+	time_count *= 1e-9;
+	std::cout << "Algorytm zajął " << time_count << " s" << std::endl;
 
 	// Koniec: wypisanie wartości
 	//for (long n:primes){
