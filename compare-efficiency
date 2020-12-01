@@ -1,0 +1,38 @@
+#!/bin/bash
+
+sample=200
+try=1
+filename="../results$sample-$try.txt"
+alias calc="calc -p"
+cd concurrent
+{
+	g++ ../sequential/atkin.cpp -o seq &&
+	g++ ../sequential/atkin.cpp -O3 -o seq-opt &&
+	g++ atkin.cpp -l OpenCL -o con &&
+	g++ atkin.cpp -l OpenCL -O3 -o con-opt
+} || exit 1
+
+echo -e "Zasięg\t\tSekw.\t\tRówn.\t\tSekw.+opt.\tRówn.+opt." > $filename
+
+for i in {1..8}; do
+	range=$((1000000*i))
+	avg=( 0 0 0 0 )
+
+	for j in $(seq 1 $sample); do
+		avg[0]=`calc ${avg[0]}+$(echo $range | ./seq | cut -d ' ' -f 3)`
+		avg[1]=`calc ${avg[1]}+$(echo $range | ./con | cut -d ' ' -f 3)`
+		avg[2]=`calc ${avg[2]}+$(echo $range | ./seq-opt | cut -d ' ' -f 3)`
+		avg[3]=`calc ${avg[3]}+$(echo $range | ./con-opt | cut -d ' ' -f 3)`
+	done
+
+	for j in {0..3}; do
+		avg[$j]=`calc ${avg[$j]}/$sample | cut -c -7`
+	done
+
+	echo -e "$range\t${avg[0]}\t${avg[1]}\t${avg[2]}\t${avg[3]}" >> $filename
+done
+
+rm seq seq-opt con con-opt
+
+cd ..
+
