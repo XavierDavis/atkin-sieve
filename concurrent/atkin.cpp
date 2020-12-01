@@ -28,8 +28,10 @@ int main(){
 	//Utworzenie programu
 	cl::Program program(context,sources);
 	program.build("-cl-std=CL1.2");
-	//Utworzenie kolejki
-	cl::CommandQueue queue(context, device);
+	//Utworzenie kolejek
+	cl::CommandQueue queue1(context, device);
+	cl::CommandQueue queue2(context, device);
+	cl::CommandQueue queue3(context, device);
 	//----------------------------------------------------------------------INICJALIZACJA OPENCLA
 
 	long range = 0;
@@ -39,58 +41,33 @@ int main(){
 
 	// Krok 1. Utworzenie listy wyników
 	std::vector<long> primes = {2, 3, 5};
-	// Krok 2. Utworzenie listy reprezentującej sito + bufora OpenCLowego
+	// Krok 2. Utworzenie bufora OpenCLowego reprezentującego sito
 	cl::Buffer sieveBuf(context, CL_MEM_READ_WRITE|CL_MEM_HOST_READ_ONLY, sizeof(int) * range);
 
-	//Utworzenie 
+	// Uruchomienie obliczeń dla pierwszej grupy reszt
+	cl::Kernel kernel1(program, "equation1");
+	kernel1.setArg(0, sieveBuf);
+	kernel1.setArg(1, range);
+	queue1.enqueueTask(kernel1);
 	
-	
-	
-	long range_rooted = std::ceil(std::sqrt(range));
-	int jump = 1048576;
-	// Krok 3.1.
-	for (long x = 0; x <= range_rooted / 2; x++){
-		long limit = std::sqrt(range - 4*x*x);
-		for(long y = 1; y <= limit; y += jump * 2){
-			cl::Kernel kernel(program, "equation1");
-			kernel.setArg(0, x);
-			kernel.setArg(1, y/(jump*2));
-			kernel.setArg(2, sieveBuf);
-			kernel.setArg(3, range);
-			queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(1024, 1024, 8));
-		}
-	}
-	
-	// Krok 3.2.
-	for (long x = 0; x <= range_rooted / std::sqrt(3); x++){
-		long limit = std::sqrt(range - 3*x*x);
-		for(long y = !(x%2); y <= limit; y += jump * 2){
-			cl::Kernel kernel(program, "equation2");
-			kernel.setArg(0, x);
-			kernel.setArg(1, y/(jump*2));
-			kernel.setArg(2, sieveBuf);
-			kernel.setArg(3, range);
-			queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(1024, 1024, 4));
-		}
-	}
+	// Równolegle druga grupa reszt
+	cl::Kernel kernel2(program, "equation2");
+	kernel2.setArg(0, sieveBuf);
+	kernel2.setArg(1, range);
+	queue2.enqueueTask(kernel2);
 
-	// Krok 3.3.
-	for (long x = 1; 2*x*x + 2*x - 1 < range; x++){
-		long limit = 0;
-		if(3*x*x > range)
-			limit = std::ceil(std::sqrt(3*x*x - range));
-		for(long y = x-1; y >= limit; y -= jump * 2){
-			cl::Kernel kernel(program, "equation3");
-			kernel.setArg(0, x);
-			kernel.setArg(1, y/(jump*2));
-			kernel.setArg(2, sieveBuf);
-			kernel.setArg(3, range);
-			queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(1024, 1024, 4));
-		}
-	}	
+	// Równolegle trzecia grupa reszt
+	cl::Kernel kernel3(program, "equation3");
+	kernel3.setArg(0, sieveBuf);
+	kernel3.setArg(1, range);
+	queue3.enqueueTask(kernel3);
 
+	// Czekanie na zakończenie zadań
+	cl::finish();
+
+	// Odczyt z bufora
 	bool sieve[range];
-	queue.enqueueReadBuffer(sieveBuf, CL_TRUE, 0, sizeof(sieve), sieve);
+	queue1.enqueueReadBuffer(sieveBuf, CL_TRUE, 0, sizeof(sieve), sieve);
 
 	for(long i = 6; i < range; i++){
 		// Krok 4.

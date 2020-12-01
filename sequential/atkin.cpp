@@ -80,7 +80,7 @@ int main(){
 	}
 
 	// Koniec: wypisanie wartości
-	for (long n:primes){
-		std::cout << n << std::endl;
-	}
+	//for (long n:primes){
+	//	std::cout << n << std::endl;
+	//}
 }
