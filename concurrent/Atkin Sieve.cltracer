@@ -1,8 +1,0 @@
-{
-    "projectName": "Atkin Sieve",
-    "projectDir": "/home/xavierdavis/pwr/akceleracja/projekt/atkin-sieve/concurrent",
-    "executable": "/home/xavierdavis/pwr/akceleracja/projekt/atkin-sieve/concurrent/a.out",
-    "workingDir": "/home/xavierdavis/pwr/akceleracja/projekt/atkin-sieve/concurrent",
-    "terminal": true,
-    "termCmd": "konsole -e"
-}
